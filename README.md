@@ -5,12 +5,12 @@ This project implements a basic path-tracing ray tracer inside a Cornell box usi
 
 Features
 ---------------------
-Objects: The scene includes spheres and triangles (used to construct the Cornell box and light sources).
+- Objects: The scene includes spheres and triangles (used to construct the Cornell box and light sources).
 
-Path Tracing: The ray tracer uses path tracing to simulate global illumination by recursively tracing rays and calculating their interactions with surfaces.
+- Path Tracing: The ray tracer uses path tracing to simulate global illumination by recursively tracing rays and calculating their interactions with surfaces.
 
-Ambient Occlusion: Simulates soft shadowing in areas where light is partially occluded, like corners and crevices, adding depth and realism to the scene.
+- Ambient Occlusion: Simulates soft shadowing in areas where light is partially occluded, like corners and crevices, adding depth and realism to the scene.
 
-Bloom: Adds a glow around bright objects like light sources, simulating the blooming effect that occurs due to light scattering in real-world optics.
+- Bloom: Adds a glow around bright objects like light sources, simulating the blooming effect that occurs due to light scattering in real-world optics.
 
 ![full accumulation](https://github.com/user-attachments/assets/e9c56272-8749-4c65-9e74-605f79a67842)

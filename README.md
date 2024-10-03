@@ -16,7 +16,7 @@ Features
 Changelog
 ---------------------
 v1.1
-- Improved trace speed by adding OpenMP Multithreading.
+- Significantly improved trace speed by adding OpenMP Multithreading.
 
 - Improved scene quality by implementing Importance Sampling.
 

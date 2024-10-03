@@ -14,9 +14,12 @@ v1.0
 
 - Bloom: Adds a glow around bright objects like light sources, simulating the blooming effect that occurs due to light scattering in real-world optics.
 
+Changelog
+---------------------
 v1.1
 - Improved trace speed by adding OpenMP Multithreading.
 
 - Improved scene quality by implementing Importance Sampling.
+
 ---------------------
 ![full accumulation](https://github.com/user-attachments/assets/e9c56272-8749-4c65-9e74-605f79a67842)

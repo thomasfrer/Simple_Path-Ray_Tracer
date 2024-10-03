@@ -12,5 +12,15 @@ Features
 - Ambient Occlusion: Simulates soft shadowing in areas where light is partially occluded, like corners and crevices, adding depth and realism to the scene.
 
 - Bloom: Adds a glow around bright objects like light sources, simulating the blooming effect that occurs due to light scattering in real-world optics.
+
+Changelog
+---------------------
+v1.1
+- Significantly improved trace speed by adding OpenMP Multithreading.
+
+- Improved scene quality by implementing Importance Sampling.
+
+v1.0
+- Initial Release
 ---------------------
 ![full accumulation](https://github.com/user-attachments/assets/e9c56272-8749-4c65-9e74-605f79a67842)

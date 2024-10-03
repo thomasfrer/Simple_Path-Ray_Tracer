@@ -1,12 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <omp.h>
+#include <iostream> // Only for debugging purposes at the moment.
 #include "Library.h"
 
 #define WINDOW_WIDTH 600
 #define WINDOW_HEIGHT 600
 
 const int numSamples = 1000;
-const int maxDepth = 10;
+const int maxDepth = 8;
 const vec3 eye = vec3(0.f, 0.f, 5.f);
 
 const float brightness = (2.f * 3.1415926f) * (2.f / float(numSamples));
@@ -41,7 +43,7 @@ vec3 pathTrace(Ray ray, std::vector<Object*> objects, int depth) {
 
 	Ray randomRay;
 	randomRay.origin = finalHi.hitLocation;
-	randomRay.direction = randomDirection(finalHi.normal);
+	randomRay.direction = importanceSampleHemisphere(finalHi.normal);
 
 	float cosine = fabs(dot(-ray.direction, finalHi.normal));
 	vec3 originalColor = finalHi.color;
@@ -159,7 +161,13 @@ int main() {
 	memset(image, 0.0, sizeof(double) * WINDOW_WIDTH * WINDOW_HEIGHT * 3);
 	double* p = image;
 
-	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Ray Tracing");
+	// Initialize adaptive sampling variables
+	double* varianceBuffer = new double[WINDOW_WIDTH * WINDOW_HEIGHT * 3]; // Store pixel variance
+	int* sampleCount = new int[WINDOW_WIDTH * WINDOW_HEIGHT];             // Track samples per pixel
+	memset(varianceBuffer, 0.0, sizeof(double) * WINDOW_WIDTH * WINDOW_HEIGHT * 3);
+	memset(sampleCount, 0, sizeof(int) * WINDOW_WIDTH * WINDOW_HEIGHT);
+
+	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Cornell Box Ray Tracer");
 
 	sf::Image sfImage;
 	sfImage.create(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -181,9 +189,11 @@ int main() {
 
 		if (s < numSamples) {
 
-			p = image;
+			#pragma omp parallel for collapse(2) private(ray, hi, finalHi, color, minT, i, j)
 			for (int y = 0; y < WINDOW_HEIGHT; y++) {
 				for (int x = 0; x < WINDOW_WIDTH; x++) {
+					int index = (y * WINDOW_WIDTH + x) * 3;
+
 					minT = 10000000.f;
 					finalHi.hit = false;
 					hi.hit = false;
@@ -195,6 +205,7 @@ int main() {
 					ray.origin = vec3(i, j, 1.2f);
 					ray.direction = normalize(ray.origin - eye);
 
+					// Check object intersections
 					for (int k = 0; k < objects.size(); k++) {
 						hi = objects[k]->hit(ray);
 						if (hi.hit && hi.t < minT) {
@@ -203,48 +214,52 @@ int main() {
 						}
 					}
 
-					if (finalHi.hit)
-						if (finalHi.emissive)
-							color = finalHi.color;
+					// Shade the object based on hit result
+					if (finalHi.hit) {
+						if (finalHi.emissive) {
+							color = finalHi.color;  // Direct light contribution
+						}
 						else {
 							Ray randomRay;
 							randomRay.origin = finalHi.hitLocation;
-							randomRay.direction = randomDirection(finalHi.normal);
+							randomRay.direction = importanceSampleHemisphere(finalHi.normal);  // Indirect light sampling
 
 							vec3 originalColor = finalHi.color;
 							vec3 newColor = pathTrace(randomRay, objects, 0);
 							color = newColor * originalColor;
-
 							color *= brightness;
 						}
+					}
 
-					*p += color.r;
-					p++;
-					*p += color.g;
-					p++;
-					*p += color.b;
-					p++;
+					// Accumulate the pixel color
+					#pragma omp critical
+					{
+						image[index] += color.r;
+						image[index + 1] += color.g;
+						image[index + 2] += color.b;
+					}
 				}
 			}
 
+			// Update the image for display
 			p = image;
-
 			for (int e = 0; e < WINDOW_HEIGHT; e++) {
 				for (int f = 0; f < WINDOW_WIDTH; f++) {
-					r = clamp(pow(*p++, 1.0f / 2.2f) * 255, 0.0, 255.0);
+					r = clamp(pow(*p++, 1.0f / 2.2f) * 255, 0.0, 255.0);  // Gamma correction
 					g = clamp(pow(*p++, 1.0f / 2.2f) * 255, 0.0, 255.0);
 					b = clamp(pow(*p++, 1.0f / 2.2f) * 255, 0.0, 255.0);
 
-					sfImage.setPixel(f, e, sf::Color::Color(r, g, b));
+					sfImage.setPixel(f, e, sf::Color(r, g, b));
 				}
 			}
 
 			texture.loadFromImage(sfImage);
 			sprite.setTexture(texture);
 
-			s++;
+			s++;  // Increment sample counter
 		}
 
+		// Handle window events
 		sf::Event sfEvent;
 		while (window.pollEvent(sfEvent)) {
 			if (sfEvent.type == sf::Event::Closed)
@@ -255,5 +270,4 @@ int main() {
 		window.draw(sprite);
 		window.display();
 	}
-
 }

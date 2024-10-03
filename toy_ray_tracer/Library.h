@@ -145,6 +145,20 @@ vec3 randomVector() {
 	return normalize(d);
 }
 
-vec3 randomDirection(vec3 normal) {
-	return normalize(randomVector() + normal);
+vec3 importanceSampleHemisphere(const vec3& normal) {
+	float r1 = random();
+    float r2 = random();
+
+    float sinTheta = sqrt(1.0f - r2);
+    float phi = 2 * 3.1415926f * r1;
+
+    vec3 sample(sinTheta * cos(phi), sqrt(r2), sinTheta * sin(phi));
+
+    // Create an orthonormal basis for the hemisphere around the normal
+    vec3 up = abs(normal.z) < 0.999f ? vec3(0, 0, 1) : vec3(1, 0, 0);
+    vec3 tangent = normalize(cross(up, normal));
+    vec3 bitangent = cross(normal, tangent);
+
+    // Transform the sample to world coordinates
+    return normalize(sample.x * tangent + sample.y * normal + sample.z * bitangent);
 }

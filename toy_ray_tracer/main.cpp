@@ -7,7 +7,7 @@
 #define WINDOW_WIDTH 600
 #define WINDOW_HEIGHT 600
 
-const int numSamples = 1000;
+const int numSamples = 2000;
 const int maxDepth = 8;
 const vec3 eye = vec3(0.f, 0.f, 5.f);
 
@@ -217,6 +217,7 @@ int main() {
 					// Shade the object based on hit result
 					if (finalHi.hit) {
 						if (finalHi.emissive) {
+							finalHi.color = vec3(15.0f, 15.0f, 15.0f);  // Increase brightness of the light
 							color = finalHi.color;  // Direct light contribution
 						}
 						else {

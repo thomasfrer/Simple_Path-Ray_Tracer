@@ -5,7 +5,6 @@ This project implements a basic path-tracing ray tracer inside a Cornell box usi
 
 Features
 ---------------------
-v1.0
 - Objects: The scene includes spheres and triangles (used to construct the Cornell box and light sources).
 
 - Path Tracing: The ray tracer uses path tracing to simulate global illumination by recursively tracing rays and calculating their interactions with surfaces.
@@ -21,5 +20,7 @@ v1.1
 
 - Improved scene quality by implementing Importance Sampling.
 
+v1.0
+- Initial Release
 ---------------------
 ![full accumulation](https://github.com/user-attachments/assets/e9c56272-8749-4c65-9e74-605f79a67842)

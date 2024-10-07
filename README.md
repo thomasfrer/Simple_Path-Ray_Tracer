@@ -1,7 +1,7 @@
 Cornell Box Ray Tracer in C++
 -----------------------------
 
-This project implements a basic path-tracing ray tracer inside a Cornell box using C++. The ray tracer simulates the physics of light to generate realistic images by tracing the paths of rays as they bounce through the scene, interacting with various objects and light sources. It takes some time to accumulate, so give the exe some time to run for the best results. 
+This project is a basic path-tracing ray tracer inside a Cornell box using C++. The ray tracer simulates the physics of light to generate a realistic image by tracing the paths of rays as they bounce through the scene, interacting with various objects and light sources. It takes some time to accumulate, so give it some time to run for the best results. 
 
 Features
 ---------------------
